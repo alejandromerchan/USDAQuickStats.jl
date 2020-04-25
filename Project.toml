@@ -1,0 +1,13 @@
+name = "USDAQuickStats"
+uuid = "7a997779-2268-4af1-92a2-957a4c5037ec"
+authors = ["H. Alejandro Merchan", "California Department of Pesticide Regulation"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
