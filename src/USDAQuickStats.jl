@@ -3,7 +3,6 @@ module USDAQuickStats
 import HTTP
 import JSON3
 import JSONTables
-import PrettyTables
 import DataFrames
 
 export

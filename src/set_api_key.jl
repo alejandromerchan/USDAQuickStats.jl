@@ -4,7 +4,7 @@ end
 
 function set_api_key(api_key::String)
     length(api_key) != 36 ? (throw("Key must be 36 characters long")) : nothing
-    
+
     if "USDA_QUICK_SURVEY_KEY" ∉ keys(ENV) || length(ENV["USDA_QUICK_SURVEY_KEY"]) != 36
         ENV["USDA_QUICK_SURVEY_KEY"] = api_key
         println("local API key is set.")
