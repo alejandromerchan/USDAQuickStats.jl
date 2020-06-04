@@ -11,6 +11,10 @@ JSONTables = "b9914132-a727-11e9-1322-f18e41205b0b"
 
 [compat]
 julia = "1"
+DataFrames = "0.21"
+JSON3 = "1"
+JSONTables = "1"
+HTTP = "0.8"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
