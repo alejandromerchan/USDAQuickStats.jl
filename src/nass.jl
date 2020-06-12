@@ -15,8 +15,11 @@ function get_nass(args...; format="json")
     url = string(header, query)
 
     r = HTTP.request("GET", url)
+    read(r.body)
 end
 
-function return_table(json_object)
-    DataFrames.DataFrame(JSONTables.jsontable(JSON3.read(json_object.body)[:data]))
-end
+# TODO
+# Implement reading functions?
+#function return_table(json_object)
+#    DataFrames.DataFrame(JSONTables.jsontable(JSON3.read(json_object.body)[:data]))
+#end

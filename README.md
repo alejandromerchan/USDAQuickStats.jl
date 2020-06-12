@@ -58,22 +58,8 @@ query = get_nass("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA",
 output
 
 ```@julia
-HTTP.Messages.Response:
-"""
-HTTP/1.1 200 OK
-Date: Wed, 10 Jun 2020 03:53:59 GMT
-Server: Apache/2.4.23 (Linux/SUSE)
-X-Frame-Options: SAMEORIGIN
-Content-Length: 274536
-Cache-Control: max-age=86400, private
-Connection: close
-Content-Type: application/json
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-
-{"data":[{"county_code":"","watershed_code":"00000000","class_desc":"ALL CLASSES","group_desc":"FRUIT & TREE NUTS","commodity_desc":"ORANGES","sector_desc":"CROPS","domaincat_desc":"NOT SPECIFIED","unit_desc":"ACRES","Value":"147,000","state_name":"CALIFORNIA","state_ansi":"06","week_ending":"","asd_code":"","domain_desc":"TOTAL","year":2019,"load_time":"2019-08-28 15:09:57","county_ansi":"","state_alpha":"CA","short_desc":"ORANGES - ACRES BEARING","county_name":"","zip_5":"","begin_code":"00","freq_desc":"ANNUAL","CV (%)":"","country_code":"9000","agg_level_desc":"STATE","watershed_desc":"","asd_desc":"","region_desc":"","source_desc":"SURVEY","util_practice_desc":"ALL UTILIZATION PRACTICES","location_desc":"CALIFORNIA","state_fips_code":"06","statisticcat_desc":"AREA BEARING","end_code":"00","congr_district_code":"","prodn_practice_desc":"ALL PRODUCTION PRACTICES","country_name":"UNITED STATES","reference_period_desc":"YEAR"},{"domain_desc":"TOTAL","state_name":"CALIFORNIA","state_an
-⋮
-274536-byte body
-"""
+JSON3.Object{Array{UInt8,1},Array{UInt64,1}} with 1 entry:
+  :data => JSON3.Object[{…
 ```
 
 The function produces a JSON object by default which can be saved and parsed in different ways.
@@ -96,7 +82,7 @@ And do something like this:
 ```@julia
 using DataFrames, JSONTables, JSON3
 query = get_nass("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED")
-DataFrames.DataFrame(JSONTables.jsontable(JSON3.read(query.body)[:data]))
+DataFrames.DataFrame(JSONTables.jsontable(query)[:data]))
 ```
 
 output
@@ -125,19 +111,8 @@ get_param_values("sector_desc")
 output
 
 ```@julia
-HTTP.Messages.Response:
-"""
-HTTP/1.1 200 OK
-Date: Wed, 10 Jun 2020 04:24:33 GMT
-Server: Apache/2.4.23 (Linux/SUSE)
-X-Frame-Options: SAMEORIGIN
-Content-Length: 89
-Cache-Control: max-age=86400, private
-Connection: close
-Content-Type: application/json
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-
-{"sector_desc":["ANIMALS & PRODUCTS","CROPS","DEMOGRAPHICS","ECONOMICS","ENVIRONMENTAL"]}"""
+JSON3.Object{Array{UInt8,1},Array{UInt64,1}} with 1 entry:
+  :sector_desc => ["ANIMALS & PRODUCTS", "CROPS", "DEMOGRAPHICS", "ECONOMICS", "ENVIRONMENTAL"]
 ```
 
 **get_counts**
