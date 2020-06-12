@@ -44,7 +44,7 @@ The API for the Quick Stats database provides three main functions:
 - get_counts
 - get_param_values
 
-####get_nass
+**get_nass**
 
 The main function is `get_nass`, which queries the main USDA Quick Stats database.
 
@@ -114,7 +114,7 @@ output
 │ 276 │ ALL PRODUCTION PRACTICES │ CALIFORNIA │ UNITED STATES │          │ 00000000       │ 06              │ SURVEY      │ CALIFORNIA    │ PRICE RECEIVED    │
 ```
 
-####get_param_values
+**get_param_values**
 
 `get_param_values` is a helper query that allow user to check the values of a parameter in the query. This is useful when constructing different query strings.
 
@@ -140,7 +140,7 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 {"sector_desc":["ANIMALS & PRODUCTS","CROPS","DEMOGRAPHICS","ECONOMICS","ENVIRONMENTAL"]}"""
 ```
 
-####get_counts
+**get_counts**
 
 `get_counts` is a helper query that allows user to check the number of records a query will produce before performing the query. This is important because the USDA Quick Stats API has a limit of 50,000 records per query. Any query requesting a number of records larger than this limit will fail.
 
@@ -170,4 +170,4 @@ JSON3.Object{Array{UInt8,1},Array{UInt64,1}} with 1 entry:
 
 I would like to thank @markushhh, because I heavily used his [FredApi.jl](https://github.com/markushhh/FredApi.jl) for inspiration. And sometimes blatant plagiarism.
 
-# Each comment, suggestion or pull request is welcome!
+## Each comment, suggestion or pull request is welcome!
