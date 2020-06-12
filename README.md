@@ -1,12 +1,5 @@
 # USDAQuickStats.jl
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://alejandromerchan.github.io/USDAQuickStats.jl/stable)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://alejandromerchan.github.io/USDAQuickStats.jl/dev)
-[![Build Status](https://travis-ci.com/alejandromerchan/USDAQuickStats.jl.svg?branch=master)](https://travis-ci.com/alejandromerchan/USDAQuickStats.jl)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/alejandromerchan/USDAQuickStats.jl?svg=true)](https://ci.appveyor.com/project/alejandromerchan/USDAQuickStats-jl)
-[![Codecov](https://codecov.io/gh/alejandromerchan/USDAQuickStats.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/alejandromerchan/USDAQuickStats.jl)
-[![Coveralls](https://coveralls.io/repos/github/alejandromerchan/USDAQuickStats.jl/badge.svg?branch=master)](https://coveralls.io/github/alejandromerchan/USDAQuickStats.jl?branch=master)
-
 
 `USDAQuickStats.jl` offers the possibility to access the USDA National Agricultural Statistics Service (NASS) [Quick Stats database](https://quickstats.nass.usda.gov/api) in Julia.
 
@@ -51,7 +44,7 @@ The API for the Quick Stats database provides three main functions:
 - get_counts
 - get_param_values
 
-##get_nass##
+####get_nass
 
 The main function is `get_nass`, which queries the main USDA Quick Stats database.
 
@@ -95,8 +88,8 @@ The purpose of the package is to query the database and the user will perform an
 
 For example, to read the JSON object into a DataFrame, the user can use the following packages:
 - [DataFrames](https://github.com/JuliaData/DataFrames.jl)
-- [JSONTables] (https://github.com/JuliaData/JSONTables.jl)
-- [JSON3] (https://github.com/quinnj/JSON3.jl)
+- [JSONTables](https://github.com/JuliaData/JSONTables.jl)
+- [JSON3](https://github.com/quinnj/JSON3.jl)
 
 And do something like this:
 
@@ -121,7 +114,7 @@ output
 │ 276 │ ALL PRODUCTION PRACTICES │ CALIFORNIA │ UNITED STATES │          │ 00000000       │ 06              │ SURVEY      │ CALIFORNIA    │ PRICE RECEIVED    │
 ```
 
-##get_param_values##
+####get_param_values
 
 `get_param_values` is a helper query that allow user to check the values of a parameter in the query. This is useful when constructing different query strings.
 
@@ -147,9 +140,9 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 {"sector_desc":["ANIMALS & PRODUCTS","CROPS","DEMOGRAPHICS","ECONOMICS","ENVIRONMENTAL"]}"""
 ```
 
-##get_counts##
+####get_counts
 
-`get_counts` is a helper query that allows user to check the number of records a query will produce before performing the query. This is important because the USDA Quick Stats API has a limit of 50,000 records per query and any query that is larger than this will fail.
+`get_counts` is a helper query that allows user to check the number of records a query will produce before performing the query. This is important because the USDA Quick Stats API has a limit of 50,000 records per query. Any query requesting a number of records larger than this limit will fail.
 
 ```@julia
 get_counts("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED")
@@ -175,6 +168,6 @@ JSON3.Object{Array{UInt8,1},Array{UInt64,1}} with 1 entry:
   :count => 381929
 ```
 
-I would like to thank @markushhh, because I heavily used his [FredApi.jl](https://github.com/markushhh/FredApi.jl) for inspiration. And sometimes blatant plagiarism. 
+I would like to thank @markushhh, because I heavily used his [FredApi.jl](https://github.com/markushhh/FredApi.jl) for inspiration. And sometimes blatant plagiarism.
 
 # Each comment, suggestion or pull request is welcome!
