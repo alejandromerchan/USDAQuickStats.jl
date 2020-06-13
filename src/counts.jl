@@ -11,6 +11,5 @@ function get_counts(args...)
 
     url = string(header, query)
 
-    r = HTTP.request("GET", url)
-    read(r.body)
+    JSON3.read(request("GET", url).body)
 end

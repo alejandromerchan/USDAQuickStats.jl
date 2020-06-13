@@ -1,7 +1,11 @@
 module USDAQuickStats
 
-import HTTP
-import JSON3: read
+import CSV
+import DataFrames: DataFrame
+import HTTP: request
+import JSON3
+import JSONTables: jsontable
+
 
 export
     set_api_key,

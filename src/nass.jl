@@ -12,14 +12,13 @@ function get_nass(args...; format="json")
         query *= arg
     end
 
-    url = string(header, query)
-
-    r = HTTP.request("GET", url)
-    read(r.body)
+    if uppercase(format) == "JSON"
+        r = request("GET", string(header, query)).body
+        DataFrame(jsontable(JSON3.read(r)[:data]))
+    elseif uppercase(format) == "CSV"
+        r = request("GET", string(header, query)).body
+        CSV.read(r)
+    else
+        r = request("GET", string(header, query))
+    end
 end
-
-# TODO
-# Implement reading functions?
-#function return_table(json_object)
-#    DataFrames.DataFrame(JSONTables.jsontable(JSON3.read(json_object.body)[:data]))
-#end

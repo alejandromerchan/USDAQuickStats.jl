@@ -8,7 +8,6 @@
 ```@julia
 add USDAQuickStats
 ```
-
 ## Index
 
 The package contains following functions:
@@ -19,22 +18,22 @@ The package contains following functions:
 - `get_nass`
 
 ## Tutorial and Workflow
-### Set up an Envionment Variable for the NASS API key
+### Set up an Environment Variable for the NASS API key
 
-To start using the API, you first need to get a **personal API key**.
+To start using the API, the user first needs to get a **personal API key**.
 
-You can request a NASS API key at [https://quickstats.nass.usda.gov/api](https://quickstats.nass.usda.gov/api).
+The user can request a NASS API key at [https://quickstats.nass.usda.gov/api](https://quickstats.nass.usda.gov/api).
 
-Once you receive your key, you can either set it up as an environment variable called USDA_QUICK_SURVEY_KEY" or set it up during a new julia session with
+The API key can be saved as an environment variable called "USDA_QUICK_SURVEY_KEY" or used during each new Julia session by setting it up using:
 
 ```@julia
 using USDAQuickStats
 set_api_key("YOUR_KEY"::String)
 ```
 
-where you manually replace `YOUR_KEY` with your private API key.
+replacing `"YOUR_KEY"` with the private API key as a string.
 
-If you are constantly  using the database, you might want to make your key into a permanent variable in your environment.
+Saving the key into a permanent variable in your environment is dependent on the operating system.
 
 ### Query the database
 
@@ -46,45 +45,23 @@ The API for the Quick Stats database provides three main functions:
 
 **get_nass**
 
+`get_nass(args...; format="json")
+`
 The main function is `get_nass`, which queries the main USDA Quick Stats database.
 
-The description of the different fields for the database is available [here].(https://quickstats.nass.usda.gov/api)
+`args...` is a list of the different headers from the database that can be queried. Each argument is a string with the name of the header and the value from that header in uppercase, e.g. `"header=VALUE`. The description of the different headers (also called columns) for the database is available [here].(https://quickstats.nass.usda.gov/api)
 
-In this example I queried the survey data for oranges in California (CA) for the year 2019. I'm interested in the variables "ACRES BEARING" and "PRICE RECEIVED".
+The `format` keyword can be added to the query after a semicolon `;` and defines the format of the response. It is set to `JSON` as a default, other formats provided by the database are `CSV` and `XML`.
+
+The function returns a DataFrame with the requested query for the `JSON` and `CSV` formats, no DataFrame has been implemented for the `XML` format yet, PR's welcome.
+
+In the following example, the survey data for oranges in California (CA) for the year 2019 was queried for information about the headers "ACRES BEARING" and "PRICE RECEIVED".
+
+Notice that header values that have spaces in them need to be passed with the symbol `%20` replacing the space. In general, no spaces are allowed in the query.
 
 ```@julia
 query = get_nass("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED")
 ```
-output
-
-```@julia
-JSON3.Object{Array{UInt8,1},Array{UInt64,1}} with 1 entry:
-  :data => JSON3.Object[{…
-```
-
-The function produces a JSON object by default which can be saved and parsed in different ways.
-
-The `format` keyword can be added to the query after a semicolon `;` to request other formats outputs, CSV and XML are also available.
-
-```@julia
-query = get_nass("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED"; format="CSV")
-```
-
-The purpose of the package is to query the database and the user will perform any further manipulation of the resulting object.
-
-For example, to read the JSON object into a DataFrame, the user can use the following packages:
-- [DataFrames](https://github.com/JuliaData/DataFrames.jl)
-- [JSONTables](https://github.com/JuliaData/JSONTables.jl)
-- [JSON3](https://github.com/quinnj/JSON3.jl)
-
-And do something like this:
-
-```@julia
-using DataFrames, JSONTables, JSON3
-query = get_nass("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED")
-DataFrames.DataFrame(JSONTables.jsontable(query)[:data]))
-```
-
 output
 
 ```@julia
@@ -102,10 +79,10 @@ output
 
 **get_param_values**
 
-`get_param_values` is a helper query that allow user to check the values of a parameter in the query. This is useful when constructing different query strings.
+`get_param_values(arg)` is a helper query that allow user to check the values of a field `arg` from the database. This is useful when constructing different query strings, as it allows the user to determine which values are available on each field.
 
 ```@julia
-get_param_values("sector_desc")
+db_values = get_param_values("sector_desc")
 ```
 
 output
@@ -115,12 +92,20 @@ JSON3.Object{Array{UInt8,1},Array{UInt64,1}} with 1 entry:
   :sector_desc => ["ANIMALS & PRODUCTS", "CROPS", "DEMOGRAPHICS", "ECONOMICS", "ENVIRONMENTAL"]
 ```
 
+If the user need to access the values, they are available as an array `db_values[:sector_desc]`.
+
 **get_counts**
 
-`get_counts` is a helper query that allows user to check the number of records a query will produce before performing the query. This is important because the USDA Quick Stats API has a limit of 50,000 records per query. Any query requesting a number of records larger than this limit will fail.
+`get_counts(args...)` is a helper query that allows user to check the number of records a query using the fields in `args...` will produce before performing the query. This is important because the USDA Quick Stats API has a limit of 50,000 records per query. Any query requesting a number of records larger than this limit will fail.
+
+As in `get_nass`, `args...` is a list of the different headers from the database that can be queried. Each argument is a string with the name of the header and the value from that header in uppercase, e.g. `"header=VALUE`. The description of the different headers (also called columns) for the database is available [here].(https://quickstats.nass.usda.gov/api)
+
+In the following example, the number of records for survey data for oranges in California (CA) for the year 2019 with information about the headers "ACRES BEARING" and "PRICE RECEIVED" was queried. 
+
+Notice that header values that have spaces in them need to be passed with the symbol `%20` replacing the space. In general, no spaces are allowed in the query.
 
 ```@julia
-get_counts("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED")
+count = get_counts("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED")
 ```
 
 output
@@ -129,6 +114,8 @@ output
 JSON3.Object{Array{UInt8,1},Array{UInt64,1}} with 1 entry:
   :count => 276
 ```
+
+Same as before, the value can be accessed as an array `count[:count]`.
 
 A very large query would be for example:
 
