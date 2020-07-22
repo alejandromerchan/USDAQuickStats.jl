@@ -17,7 +17,7 @@ function get_nass(args...; format="json")
         DataFrame(jsontable(JSON3.read(r)[:data]))
     elseif uppercase(format) == "CSV"
         r = request("GET", string(header, query)).body
-        CSV.read(r)
+        CSV.File(r) |> DataFrame
     else
         r = request("GET", string(header, query))
     end
