@@ -1,7 +1,7 @@
 name = "USDAQuickStats"
 uuid = "7a997779-2268-4af1-92a2-957a4c5037ec"
 authors = ["H. Alejandro Merchan", "California Department of Pesticide Regulation"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
