@@ -53,9 +53,9 @@ The main function is `get_nass`, which queries the main USDA Quick Stats databas
 
 The `format` keyword can be added to the query after a semicolon `;` and defines the format of the response. It is set to `JSON` as a default, other formats provided by the database are `CSV` and `XML`.
 
-The function returns a DataFrame with the requested query for the `JSON` and `CSV` formats, no DataFrame has been implemented for the `XML` format yet, PR's welcome.
+The function returns a HTTP.request object and the user can parse it using different packages, some examples below.
 
-In the following example, the survey data for oranges in California (CA) for the year 2019 was queried for information about the headers "ACRES BEARING" and "PRICE RECEIVED".
+In the following example, the survey data for oranges in California (CA) for the year 2019 was queried for information about the headers "ACRES BEARING" and "PRICE RECEIVED". The format keyword isn't specified, so the request will return a JSON file. 
 
 Notice that header values that have spaces in them need to be passed with the symbol `%20` replacing the space. In general, no spaces are allowed in the query.
 
@@ -65,17 +65,39 @@ query = get_nass("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA",
 output
 
 ```@julia
-276×39 DataFrame. Omitted printing of 30 columns
-│ Row │ prodn_practice_desc      │ state_name │ country_name  │ asd_desc │ watershed_code │ state_fips_code │ source_desc │ location_desc │ statisticcat_desc │
-│     │ String                   │ String     │ String        │ String   │ String         │ String          │ String      │ String        │ String            │
-├─────┼──────────────────────────┼────────────┼───────────────┼──────────┼────────────────┼─────────────────┼─────────────┼───────────────┼───────────────────┤
-│ 1   │ ALL PRODUCTION PRACTICES │ CALIFORNIA │ UNITED STATES │          │ 00000000       │ 06              │ SURVEY      │ CALIFORNIA    │ AREA BEARING      │
-│ 2   │ ALL PRODUCTION PRACTICES │ CALIFORNIA │ UNITED STATES │          │ 00000000       │ 06              │ SURVEY      │ CALIFORNIA    │ PRICE RECEIVED    │
+HTTP.Messages.Response:
+"""
+HTTP/1.1 200 OK
+Date: Sat, 26 Dec 2020 19:36:55 GMT
+Server: Apache/2.4.23 (Linux/SUSE)
+X-Frame-Options: SAMEORIGIN
+Content-Length: 274515
+Cache-Control: max-age=86400, private
+Connection: close
+Content-Type: application/json
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+{"data":[{"begin_code":"00","prodn_practice_desc":"ALL PRODUCTION PRACTICES","watershed_desc":"","state_fips_code":"06","commodity_desc":"ORANGES","statisticcat_desc":"AREA BEARING","Value":"147,000","watershed_code":"00000000","source_desc":"SURVEY","util_practice_desc":"ALL UTILIZATION PRACTICES","domaincat_desc":"NOT SPECIFIED","domain_desc":"TOTAL","state_alpha":"CA","week_ending":"","group_desc":"FRUIT & TREE NUTS","reference_period_desc":"YEAR","CV (%)":"","year":2019,"short_desc":"ORANGES - ACRES BEARING","country_code":"9000","load_time":"2019-08-28 15:09:57","country_name":"UNITED STATES","unit_desc":"ACRES","county_code":"","end_code":"00","sector_desc":"CROPS","state_name":"CALIFORNIA","zip_5":"","class_desc":"ALL CLASSES","county_ansi":"","asd_code":"","location_desc":"CALIFORNIA","congr_district_code":"","county_name":"","state_ansi":"06","region_desc":"","asd_desc":"","freq_desc":"ANNUAL","agg_level_desc":"STATE"},{"reference_period_desc":"MARKETING YEAR","CV (%)":"","yea
 ⋮
-│ 274 │ ALL PRODUCTION PRACTICES │ CALIFORNIA │ UNITED STATES │          │ 00000000       │ 06              │ SURVEY      │ CALIFORNIA    │ PRICE RECEIVED    │
-│ 275 │ ALL PRODUCTION PRACTICES │ CALIFORNIA │ UNITED STATES │          │ 00000000       │ 06              │ SURVEY      │ CALIFORNIA    │ PRICE RECEIVED    │
-│ 276 │ ALL PRODUCTION PRACTICES │ CALIFORNIA │ UNITED STATES │          │ 00000000       │ 06              │ SURVEY      │ CALIFORNIA    │ PRICE RECEIVED    │
+274515-byte body
+"""
 ```
+
+This query object can be post-processed in different ways, depending on the format. One possible option is to return the query as a CSV file and read it into a DataFrame.
+
+```@julia
+using CSV
+using DataFrames
+
+query = get_nass("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED"; format="csv")
+
+# Display as DataFrame
+CSV.File(query.body, DataFrame)
+
+# Or save it to disk
+CSV.write("query.csv", CSV.File(query.body))
+```
+
 
 **get_param_values**
 
@@ -88,11 +110,26 @@ db_values = get_param_values("sector_desc")
 output
 
 ```@julia
-JSON3.Object{Array{UInt8,1},Array{UInt64,1}} with 1 entry:
-  :sector_desc => ["ANIMALS & PRODUCTS", "CROPS", "DEMOGRAPHICS", "ECONOMICS", "ENVIRONMENTAL"]
-```
+HTTP.Messages.Response:
+"""
+HTTP/1.1 200 OK
+Date: Sat, 26 Dec 2020 20:40:29 GMT
+Server: Apache/2.4.23 (Linux/SUSE)
+X-Frame-Options: SAMEORIGIN
+Content-Length: 89
+Cache-Control: max-age=86400, private
+Connection: close
+Content-Type: application/json
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 
-If the user need to access the values, they are available as an array `db_values[:sector_desc]`.
+{"sector_desc":["ANIMALS & PRODUCTS","CROPS","DEMOGRAPHICS","ECONOMICS","ENVIRONMENTAL"]}"""
+```
+The query object can be post processed using the JSON3 package to obtain a more readable output if needed.
+```@julia
+using JSON3
+
+JSON3.read(db_values.body)
+```
 
 **get_counts**
 
@@ -111,11 +148,22 @@ count = get_counts("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA
 output
 
 ```@julia
-JSON3.Object{Array{UInt8,1},Array{UInt64,1}} with 1 entry:
-  :count => 276
+HTTP.Messages.Response:
+"""
+HTTP/1.1 200 OK
+Date: Sat, 26 Dec 2020 20:47:55 GMT
+Server: Apache/2.4.23 (Linux/SUSE)
+X-Frame-Options: SAMEORIGIN
+Content-Length: 13
+Cache-Control: max-age=86400, private
+Connection: close
+Content-Type: application/json
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+{"count":276}"""
 ```
 
-Same as before, the value can be accessed as an array `count[:count]`.
+Same as before, the object can be processed with the JSON3 package to get a more readable output.
 
 A very large query would be for example:
 
@@ -126,9 +174,21 @@ get_counts("source_desc=SURVEY", "year=2019")
 output
 
 ```@julia
-JSON3.Object{Array{UInt8,1},Array{UInt64,1}} with 1 entry:
-  :count => 381929
+HTTP.Messages.Response:
+"""
+HTTP/1.1 200 OK
+Date: Sat, 26 Dec 2020 20:49:14 GMT
+Server: Apache/2.4.23 (Linux/SUSE)
+X-Frame-Options: SAMEORIGIN
+Content-Length: 16
+Cache-Control: max-age=86400, private
+Connection: close
+Content-Type: application/json
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+{"count":448878}"""
 ```
+This query would fail if ran directly using the `get_nass` function, because it exceeds the limit of 50000 rows.
 
 I would like to thank @markushhh, because I heavily used his [FredApi.jl](https://github.com/markushhh/FredApi.jl) for inspiration. And sometimes blatant plagiarism.
 
