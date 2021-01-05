@@ -9,7 +9,5 @@ function get_counts(args...)
         query *= arg
     end
 
-    url = string(header, query)
-
-    JSON3.read(request("GET", url).body)
+    request("GET", string(header, query))
 end
