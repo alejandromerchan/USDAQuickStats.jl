@@ -83,7 +83,19 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 """
 ```
 
-This query object can be post-processed in different ways, depending on the format. One possible option is to return the query as a CSV file and read it into a DataFrame.
+This query object can be post-processed in different ways, depending on the format. JSON is the default format and the object can be displayed using the packages JSON3.jl, JSONTables.jl and DataFrames.jl.
+
+```@julia
+using JSON3
+using JSONTables
+using DataFrames
+
+jobject = JSON3.read(query.body)
+jtable = jsontable(jobject.data)
+df = DataFrame(jtable)
+```
+
+Antother option is to return the query as a CSV file and read it into a DataFrame or save it as a CSV file.
 
 ```@julia
 using CSV
@@ -98,6 +110,7 @@ CSV.File(query.body, DataFrame)
 CSV.write("query.csv", CSV.File(query.body))
 ```
 
+The query can also return an XML file.
 
 **get_param_values**
 
