@@ -1,7 +1,7 @@
 # USDAQuickStats.jl
 
 
-`USDAQuickStats.jl` offers the possibility to access the USDA National Agricultural Statistics Service (NASS) [Quick Stats database](https://quickstats.nass.usda.gov/api) in Julia.
+`USDAQuickStats.jl` provides functions to access data from the USDA National Agricultural Statistics Service (NASS) [Quick Stats database](https://quickstats.nass.usda.gov/api) API in Julia.
 
 ## Installation
 
@@ -95,7 +95,7 @@ jtable = jsontable(jobject.data)
 df = DataFrame(jtable)
 ```
 
-Antother option is to return the query as a CSV file and read it into a DataFrame or save it as a CSV file.
+The query can also be returned and processed as a CSV file.
 
 ```@julia
 using CSV
