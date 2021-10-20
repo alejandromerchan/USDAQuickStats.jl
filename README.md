@@ -104,7 +104,7 @@ using DataFrames
 query = get_nass("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED"; format="csv")
 
 # Display as DataFrame
-CSV.File(query.body, DataFrame)
+CSV.read(query.body, DataFrame)
 
 # Or save it to disk
 CSV.write("query.csv", CSV.File(query.body))
