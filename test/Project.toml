@@ -1,0 +1,6 @@
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+USDAQuickStats = "7a997779-2268-4af1-92a2-957a4c5037ec"
+
+[compat]
+julia = "1.6"
