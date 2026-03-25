@@ -1,11 +1,24 @@
 name = "USDAQuickStats"
 uuid = "7a997779-2268-4af1-92a2-957a4c5037ec"
 authors = ["H. Alejandro Merchan", "California Department of Pesticide Regulation"]
-version = "0.3.0"
+version = "0.3.1"
 
 [deps]
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 
+[weakdeps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b466-afe8fa294f38"
+JSON3 = "0f8b85d8-7e73-4b43-9b69-6c63a03f4805"
+JSONTables = "b9914132-a727-11e9-1322-f18e41205b2b"
+
+[extensions]
+DataFramesExt = ["DataFrames", "JSON3", "JSONTables", "CSV"]
+
 [compat]
+CSV = "0.10"
+DataFrames = "1"
 HTTP = "1"
-julia = "1.6"
+JSON3 = "1"
+JSONTables = "1"
+julia = "1.9"
