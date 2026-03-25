@@ -1,47 +1,48 @@
 module DataFramesExt
 
 using USDAQuickStats
-using USDAQuickStats: usda_url, USDA_KEY_NAME, _build_query, _make_request, VALID_FORMATS
-using HTTP
+using USDAQuickStats: _parse_response
 using DataFrames
 using JSON3
 using JSONTables
 using CSV
 
 """
-    get_nass(args...; format="json") -> DataFrame
+    _parse_response(body::Vector{UInt8}, format::String) -> Union{DataFrame, Vector{UInt8}}
 
-Extension method for `get_nass` that returns a `DataFrame` directly when
-`DataFrames` is loaded. Requires `JSON3` and `JSONTables` for JSON format,
-or `CSV` for CSV format.
+Extension method for `_parse_response` that returns a `DataFrame` directly
+when `DataFrames`, `JSON3`, `JSONTables`, and `CSV` are all loaded.
 
-See `USDAQuickStats.get_nass` for full documentation.
+Supports the following formats:
+- `"json"`: parses the response body using `JSON3` and `JSONTables` and
+  returns a `DataFrame`.
+- `"csv"`: reads the response body using `CSV.read` and returns a `DataFrame`.
+- `"xml"`: DataFrame conversion is not supported for XML. Returns raw
+  `Vector{UInt8}` with a warning.
+
+This method is an internal hook called by `get_nass` and is not intended
+to be called directly by users. Load `DataFrames` alongside `USDAQuickStats`
+to activate this extension automatically.
 
 # Examples
 ```julia
 using USDAQuickStats, DataFrames
 
-data = get_nass("source_desc=SURVEY", "commodity_desc=ORANGES", "state_alpha=CA", "year=2019")
-# returns a DataFrame directly
+# JSON (default) — returns DataFrame directly
+df = get_nass("source_desc=SURVEY", "commodity_desc=ORANGES", "state_alpha=CA", "year=2019")
+
+# CSV — returns DataFrame directly
+df = get_nass("commodity_desc=ORANGES", "state_alpha=CA"; format="csv")
 ```
 """
-function USDAQuickStats.get_nass(args...; format::String="json")
-    if lowercase(format) ∉ VALID_FORMATS
-        throw(ArgumentError("Invalid format \"$format\". Must be one of: $(join(VALID_FORMATS, ", "))"))
-    end
-
-    key = USDAQuickStats.get_api_key()
-    url = string(usda_url, "/api/api_GET/?key=", key, "&format=", lowercase(format), _build_query(args))
-    response = _make_request(url)
-
+function USDAQuickStats._parse_response(body::Vector{UInt8}, format::String)
     if lowercase(format) == "json"
-        return DataFrame(jsontable(JSON3.read(response.body).data))
+        return DataFrame(jsontable(JSON3.read(body).data))
     elseif lowercase(format) == "csv"
-        return CSV.read(response.body, DataFrame)
+        return CSV.read(body, DataFrame)
     else
-        # XML has no DataFrame conversion, fall back to raw bytes
         @warn "DataFrame conversion is not supported for XML format. Returning raw bytes."
-        return response.body
+        return body
     end
 end
 
