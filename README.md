@@ -1,208 +1,214 @@
 # USDAQuickStats.jl
 
+[![CI](https://github.com/alejandromerchan/USDAQuickStats.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/alejandromerchan/USDAQuickStats.jl/actions/workflows/CI.yml)
+[![Coverage](https://codecov.io/gh/alejandromerchan/USDAQuickStats.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/alejandromerchan/USDAQuickStats.jl)
+[![Julia](https://img.shields.io/badge/Julia-1.9+-blue.svg)](https://julialang.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-`USDAQuickStats.jl` provides functions to access data from the USDA National Agricultural Statistics Service (NASS) [Quick Stats database](https://quickstats.nass.usda.gov/api) API in Julia.
+`USDAQuickStats.jl` provides functions to access data from the USDA National Agricultural
+Statistics Service (NASS) [Quick Stats database](https://quickstats.nass.usda.gov/api) API
+in Julia.
+
+## Features
+
+- Simple, lightweight interface to the USDA NASS Quick Stats API
+- Automatic URL encoding — write `"AREA BEARING"` instead of `"AREA%20BEARING"`
+- Informative error messages for common failure modes
+- Returns raw bytes by default, keeping the package dependency-free
+- Optional automatic `DataFrame` conversion when `DataFrames.jl` is loaded (via package extension)
 
 ## Installation
 
-```@julia
-add USDAQuickStats
+From the Julia REPL:
+
+```julia
+] add USDAQuickStats
 ```
-## Index
 
-The package contains following functions:
+## API Key
 
-- `set_api_key`
-- `get_counts`
-- `get_param_values`
-- `get_nass`
+To use the Quick Stats API you need a personal API key. Request one at
+[https://quickstats.nass.usda.gov/api](https://quickstats.nass.usda.gov/api).
 
-## Tutorial and Workflow
-### Set up an Environment Variable for the NASS API key
+Set your key at the start of each Julia session:
 
-To start using the API, the user first needs to get a **personal API key**.
-
-The user can request a NASS API key at [https://quickstats.nass.usda.gov/api](https://quickstats.nass.usda.gov/api).
-
-The API key can be saved as an environment variable called "USDA_QUICK_SURVEY_KEY" or used during each new Julia session by setting it up using:
-
-```@julia
+```julia
 using USDAQuickStats
-set_api_key("YOUR_KEY"::String)
+set_api_key("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
 ```
 
-replacing `"YOUR_KEY"` with the private API key as a string.
+To update an existing key:
 
-Saving the key into a permanent variable in your environment is dependent on the operating system.
+```julia
+set_api_key("yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy"; overwrite=true)
+```
+
+To check which key is currently set:
+
+```julia
+get_api_key()
+```
+
+For a permanent setup, save the key as an environment variable called
+`USDA_QUICK_SURVEY_KEY` in your operating system. Julia will pick it up
+automatically on startup.
+
+## Functions
+
+The package provides four exported functions:
+
+- `set_api_key` — set your USDA NASS API key for the current session
+- `get_api_key` — return the currently set API key
+- `get_nass` — query the main Quick Stats database
+- `get_counts` — check the number of records a query would return
+- `get_param_values` — list all valid values for a given database field
+
+## Usage
+
+### Check available field values
+
+Before building a query it is useful to explore what values are available
+for each field using `get_param_values`:
+
+```julia
+using USDAQuickStats
+
+get_param_values("sector_desc")
+# ["ANIMALS & PRODUCTS", "CROPS", "DEMOGRAPHICS", "ECONOMICS", "ENVIRONMENTAL"]
+
+get_param_values("commodity_desc")
+# Returns all available commodity names
+```
+
+### Check record count before querying
+
+The API has a hard limit of **50,000 records per query**. Use `get_counts`
+before `get_nass` to verify your query is within the limit:
+
+```julia
+count = get_counts(
+    "source_desc=SURVEY",
+    "commodity_desc=ORANGES",
+    "state_alpha=CA",
+    "year=2019"
+)
+# 276
+```
+
+A query that is too broad will return a count exceeding the limit:
+
+```julia
+get_counts("source_desc=SURVEY", "year=2019")
+# 448878 — this query would fail with get_nass
+```
 
 ### Query the database
 
-The API for the Quick Stats database provides three main functions:
+`get_nass` returns the raw response body as `Vector{UInt8}`. Pass
+`"field=VALUE"` strings as arguments. Spaces in values are handled
+automatically — no need for `%20`.
 
-- get_nass
-- get_counts
-- get_param_values
-
-**get_nass**
-
-`get_nass(args...; format="json")
-`
-The main function is `get_nass`, which queries the main USDA Quick Stats database.
-
-`args...` is a list of the different headers from the database that can be queried. Each argument is a string with the name of the header and the value from that header in uppercase, e.g. `"header=VALUE`. The description of the different headers (also called columns) for the database is available [here].(https://quickstats.nass.usda.gov/api)
-
-The `format` keyword can be added to the query after a semicolon `;` and defines the format of the response. It is set to `JSON` as a default, other formats provided by the database are `CSV` and `XML`.
-
-The function returns a HTTP.request object and the user can parse it using different packages, some examples below.
-
-In the following example, the survey data for oranges in California (CA) for the year 2019 was queried for information about the headers "ACRES BEARING" and "PRICE RECEIVED". The format keyword isn't specified, so the request will return a JSON file. 
-
-Notice that header values that have spaces in them need to be passed with the symbol `%20` replacing the space. In general, no spaces are allowed in the query.
-
-```@julia
-query = get_nass("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED")
-```
-output
-
-```@julia
-HTTP.Messages.Response:
-"""
-HTTP/1.1 200 OK
-Date: Sat, 26 Dec 2020 19:36:55 GMT
-Server: Apache/2.4.23 (Linux/SUSE)
-X-Frame-Options: SAMEORIGIN
-Content-Length: 274515
-Cache-Control: max-age=86400, private
-Connection: close
-Content-Type: application/json
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-
-{"data":[{"begin_code":"00","prodn_practice_desc":"ALL PRODUCTION PRACTICES","watershed_desc":"","state_fips_code":"06","commodity_desc":"ORANGES","statisticcat_desc":"AREA BEARING","Value":"147,000","watershed_code":"00000000","source_desc":"SURVEY","util_practice_desc":"ALL UTILIZATION PRACTICES","domaincat_desc":"NOT SPECIFIED","domain_desc":"TOTAL","state_alpha":"CA","week_ending":"","group_desc":"FRUIT & TREE NUTS","reference_period_desc":"YEAR","CV (%)":"","year":2019,"short_desc":"ORANGES - ACRES BEARING","country_code":"9000","load_time":"2019-08-28 15:09:57","country_name":"UNITED STATES","unit_desc":"ACRES","county_code":"","end_code":"00","sector_desc":"CROPS","state_name":"CALIFORNIA","zip_5":"","class_desc":"ALL CLASSES","county_ansi":"","asd_code":"","location_desc":"CALIFORNIA","congr_district_code":"","county_name":"","state_ansi":"06","region_desc":"","asd_desc":"","freq_desc":"ANNUAL","agg_level_desc":"STATE"},{"reference_period_desc":"MARKETING YEAR","CV (%)":"","yea
-⋮
-274515-byte body
-"""
+```julia
+data = get_nass(
+    "source_desc=SURVEY",
+    "commodity_desc=ORANGES",
+    "state_alpha=CA",
+    "year=2019",
+    "statisticcat_desc=AREA BEARING",
+    "statisticcat_desc=PRICE RECEIVED"
+)
 ```
 
-This query object can be post-processed in different ways, depending on the format. JSON is the default format and the object can be displayed using the packages JSON3.jl, JSONTables.jl and DataFrames.jl.
+The `format` keyword controls the response format (`"json"` by default):
 
-```@julia
-using JSON3
-using JSONTables
-using DataFrames
+```julia
+# JSON (default)
+data = get_nass("commodity_desc=ORANGES", "state_alpha=CA", "year=2019")
 
-jobject = JSON3.read(query.body)
-jtable = jsontable(jobject.data)
-df = DataFrame(jtable)
+# CSV
+data = get_nass("commodity_desc=ORANGES", "state_alpha=CA", "year=2019"; format="csv")
+
+# XML
+data = get_nass("commodity_desc=ORANGES", "state_alpha=CA", "year=2019"; format="xml")
 ```
 
-The query can also be returned and processed as a CSV file.
+### Parsing the response
 
-```@julia
-using CSV
-using DataFrames
+The package returns raw bytes and lets you choose how to parse them:
 
-query = get_nass("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED"; format="csv")
+**JSON with DataFrames:**
 
-# Display as DataFrame
-CSV.read(query.body, DataFrame)
+```julia
+using JSON3, JSONTables, DataFrames
 
-# Or save it to disk
-CSV.write("query.csv", CSV.File(query.body))
+data = get_nass("commodity_desc=ORANGES", "state_alpha=CA", "year=2019")
+df = DataFrame(jsontable(JSON3.read(data).data))
 ```
 
-The query can also return an XML file.
+**CSV with DataFrames:**
 
-**get_param_values**
+```julia
+using CSV, DataFrames
 
-`get_param_values(arg)` is a helper query that allow user to check the values of a field `arg` from the database. This is useful when constructing different query strings, as it allows the user to determine which values are available on each field.
-
-```@julia
-db_values = get_param_values("sector_desc")
+data = get_nass("commodity_desc=ORANGES", "state_alpha=CA", "year=2019"; format="csv")
+df = CSV.read(data, DataFrame)
 ```
 
-output
+**Save directly to disk:**
 
-```@julia
-HTTP.Messages.Response:
-"""
-HTTP/1.1 200 OK
-Date: Sat, 26 Dec 2020 20:40:29 GMT
-Server: Apache/2.4.23 (Linux/SUSE)
-X-Frame-Options: SAMEORIGIN
-Content-Length: 89
-Cache-Control: max-age=86400, private
-Connection: close
-Content-Type: application/json
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-
-{"sector_desc":["ANIMALS & PRODUCTS","CROPS","DEMOGRAPHICS","ECONOMICS","ENVIRONMENTAL"]}"""
-```
-The query object can be post processed using the JSON3 package to obtain a more readable output if needed.
-```@julia
-using JSON3
-
-JSON3.read(db_values.body)
+```julia
+write("output.json", get_nass("commodity_desc=ORANGES", "state_alpha=CA", "year=2019"))
+write("output.csv",  get_nass("commodity_desc=ORANGES", "state_alpha=CA", "year=2019"; format="csv"))
 ```
 
-**get_counts**
+### Automatic DataFrame conversion (extension)
 
-`get_counts(args...)` is a helper query that allows user to check the number of records a query using the fields in `args...` will produce before performing the query. This is important because the USDA Quick Stats API has a limit of 50,000 records per query. Any query requesting a number of records larger than this limit will fail.
+If you have `DataFrames`, `JSON3`, `JSONTables`, and `CSV` loaded,
+`get_nass` will return a `DataFrame` directly without any extra steps:
 
-As in `get_nass`, `args...` is a list of the different headers from the database that can be queried. Each argument is a string with the name of the header and the value from that header in uppercase, e.g. `"header=VALUE`. The description of the different headers (also called columns) for the database is available [here].(https://quickstats.nass.usda.gov/api)
+```julia
+using DataFrames, JSON3, JSONTables, CSV, USDAQuickStats
 
-In the following example, the number of records for survey data for oranges in California (CA) for the year 2019 with information about the headers "ACRES BEARING" and "PRICE RECEIVED" was queried. 
-
-Notice that header values that have spaces in them need to be passed with the symbol `%20` replacing the space. In general, no spaces are allowed in the query.
-
-```@julia
-count = get_counts("source_desc=SURVEY","commodity_desc=ORANGES","state_alpha=CA", "year=2019","statisticcat_desc=AREA%20BEARING","statisticcat_desc=PRICE%20RECEIVED")
+df = get_nass(
+    "source_desc=SURVEY",
+    "commodity_desc=ORANGES",
+    "state_alpha=CA",
+    "year=2019"
+)
+# Returns a DataFrame directly
 ```
 
-output
+This is a zero-cost abstraction — users who do not have these packages
+installed get the same lightweight raw-bytes behavior as always.
 
-```@julia
-HTTP.Messages.Response:
-"""
-HTTP/1.1 200 OK
-Date: Sat, 26 Dec 2020 20:47:55 GMT
-Server: Apache/2.4.23 (Linux/SUSE)
-X-Frame-Options: SAMEORIGIN
-Content-Length: 13
-Cache-Control: max-age=86400, private
-Connection: close
-Content-Type: application/json
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+## Database Fields
 
-{"count":276}"""
-```
+The Quick Stats database has many queryable fields. Some commonly used ones:
 
-Same as before, the object can be processed with the JSON3 package to get a more readable output.
+| Field | Description | Example value |
+|---|---|---|
+| `source_desc` | Data source | `SURVEY`, `CENSUS` |
+| `sector_desc` | Sector | `CROPS`, `ANIMALS & PRODUCTS` |
+| `commodity_desc` | Commodity | `ORANGES`, `CORN`, `CATTLE` |
+| `statisticcat_desc` | Statistic category | `AREA BEARING`, `PRICE RECEIVED` |
+| `state_alpha` | State abbreviation | `CA`, `TX`, `FL` |
+| `year` | Survey year | `2019`, `2020` |
+| `freq_desc` | Frequency | `ANNUAL`, `MONTHLY` |
+| `agg_level_desc` | Aggregation level | `STATE`, `COUNTY`, `NATIONAL` |
 
-A very large query would be for example:
+For a full list of fields and their valid values use `get_param_values` or
+visit the [API documentation](https://quickstats.nass.usda.gov/api).
 
-```@julia
-get_counts("source_desc=SURVEY", "year=2019")
-```
+## Contributing
 
-output
+Contributions, bug reports, and pull requests are welcome! Please open an
+issue first to discuss any significant changes.
 
-```@julia
-HTTP.Messages.Response:
-"""
-HTTP/1.1 200 OK
-Date: Sat, 26 Dec 2020 20:49:14 GMT
-Server: Apache/2.4.23 (Linux/SUSE)
-X-Frame-Options: SAMEORIGIN
-Content-Length: 16
-Cache-Control: max-age=86400, private
-Connection: close
-Content-Type: application/json
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+## Acknowledgements
 
-{"count":448878}"""
-```
-This query would fail if ran directly using the `get_nass` function, because it exceeds the limit of 50000 rows.
+Inspired by [FredApi.jl](https://github.com/markushhh/FredApi.jl) by
+@markushhh.
 
-I would like to thank @markushhh, because I heavily used his [FredApi.jl](https://github.com/markushhh/FredApi.jl) for inspiration. And sometimes blatant plagiarism.
+## License
 
-## Each comment, suggestion or pull request is welcome!
+MIT License. See [LICENSE](LICENSE) for details.
