@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '1.10'
+          - '1.12'
+          - 'nightly'
+        os:
+          - ubuntu-latest
+          - macOS-latest
+          - windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.version }}
+
+      - name: Build package
+        uses: julia-actions/julia-buildpkg@v1
+
+      - name: Run tests
+        uses: julia-actions/julia-runtest@v1
+
+      - name: Process coverage
+        uses: julia-actions/julia-processcoverage@v1
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
