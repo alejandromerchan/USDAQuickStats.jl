@@ -4,6 +4,7 @@
 [![Coverage](https://codecov.io/gh/alejandromerchan/USDAQuickStats.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/alejandromerchan/USDAQuickStats.jl)
 [![Julia](https://img.shields.io/badge/Julia-1.9+-blue.svg)](https://julialang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://alejandromerchan.github.io/USDAQuickStats.jl)
 
 `USDAQuickStats.jl` provides functions to access data from the USDA National Agricultural
 Statistics Service (NASS) [Quick Stats database](https://quickstats.nass.usda.gov/api) API
