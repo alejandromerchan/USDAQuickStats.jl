@@ -7,7 +7,7 @@ export
     get_api_key,
     get_counts,
     get_param_values,
-    get_nass
+    get_nass,
     get_nass_df
 
 const usda_url = "https://quickstats.nass.usda.gov"
