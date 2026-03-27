@@ -56,11 +56,12 @@ automatically on startup.
 
 ## Functions
 
-The package provides four exported functions:
+The package provides six exported functions:
 
 - `set_api_key` — set your USDA NASS API key for the current session
 - `get_api_key` — return the currently set API key
-- `get_nass` — query the main Quick Stats database
+- `get_nass` — query the main USDA NASS Quick Stats database
+- `get_nass_df` - query the main USDA NASS Quick Statas database and returns a dataframe, if DataFrames is installed.
 - `get_counts` — check the number of records a query would return
 - `get_param_values` — list all valid values for a given database field
 
@@ -165,12 +166,13 @@ write("output.csv",  get_nass("commodity_desc=ORANGES", "state_alpha=CA", "year=
 ### Automatic DataFrame conversion (extension)
 
 If you have `DataFrames`, `JSON3`, `JSONTables`, and `CSV` loaded,
-`get_nass` will return a `DataFrame` directly without any extra steps:
+a dedicated `get_nass_df` function becomes available that returns a
+`DataFrame` directly:
 
 ```julia
 using DataFrames, JSON3, JSONTables, CSV, USDAQuickStats
 
-df = get_nass(
+df = get_nass_df(
     "source_desc=SURVEY",
     "commodity_desc=ORANGES",
     "state_alpha=CA",
@@ -179,8 +181,8 @@ df = get_nass(
 # Returns a DataFrame directly
 ```
 
-This is a zero-cost abstraction — users who do not have these packages
-installed get the same lightweight raw-bytes behavior as always.
+Users who do not have these packages installed can still use `get_nass`
+as normal, which returns raw `Vector{UInt8}` bytes.
 
 ## Database Fields
 
