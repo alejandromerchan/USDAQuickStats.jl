@@ -49,18 +49,19 @@ export USDA_QUICK_SURVEY_KEY="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 ## Optional: DataFrame support
 
+
 If you have `DataFrames.jl`, `JSON3.jl`, `JSONTables.jl`, and
 `CSV.jl` installed, loading them alongside `USDAQuickStats.jl`
-will automatically activate a package extension that returns query
-results as a `DataFrame` instead of raw bytes — no extra steps
-required.
+activates a package extension that provides a dedicated `get_nass_df`
+function returning a `DataFrame` directly:
+
 ```julia
 using DataFrames, JSON3, JSONTables, CSV
 using USDAQuickStats
 
-df = get_nass("commodity_desc=ORANGES", "state_alpha=CA", "year=2019")
+df = get_nass_df("commodity_desc=ORANGES", "state_alpha=CA", "year=2019")
 # Returns a DataFrame directly
 ```
 
 Users who do not have these packages installed are unaffected —
-the package behaves identically to the base version.
+`get_nass` continues to return raw bytes as normal.

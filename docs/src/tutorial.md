@@ -114,11 +114,11 @@ write("oranges_ca_2019.csv", get_nass(
 ## Using the DataFrames extension
 
 If you have `DataFrames`, `JSON3`, `JSONTables`, and `CSV` loaded,
-`get_nass` returns a `DataFrame` directly:
+a dedicated `get_nass_df` function becomes available:
 ```julia
 using DataFrames, JSON3, JSONTables, CSV, USDAQuickStats
 
-df = get_nass(
+df = get_nass_df(
     "source_desc=SURVEY",
     "commodity_desc=ORANGES",
     "state_alpha=CA",
@@ -128,6 +128,10 @@ df = get_nass(
 )
 # Returns a DataFrame directly — no manual parsing needed
 ```
+
+Note that `get_nass` is unchanged and still returns raw bytes —
+`get_nass_df` is a separate function only available when the
+extension packages are loaded.
 
 ## Common database fields
 
