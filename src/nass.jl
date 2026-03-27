@@ -42,5 +42,13 @@ function get_nass(args...; format::String="json")
     key = get_api_key()
     url = string(usda_url, "/api/api_GET/?key=", key, "&format=", lowercase(format), _build_query(args))
     response = _make_request(url)
-    return response.body
+    return _parse_response(response.body, format)
 end
+
+"""
+    _parse_response(body::Vector{UInt8}, format::String) -> Vector{UInt8}
+
+Internal hook for parsing API responses. Returns raw bytes by default.
+Overloaded by extensions to return richer types like DataFrame.
+"""
+_parse_response(body::Vector{UInt8}, format::String) = body
