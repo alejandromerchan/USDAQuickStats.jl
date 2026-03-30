@@ -17,6 +17,8 @@ get_param_values
 
 ## DataFrames Extension
 
-`get_nass_df` is available when `DataFrames`, `JSON3`, `JSONTables`, and
-`CSV` are all loaded. It queries the database and returns a `DataFrame`
-directly. See the [Tutorial](@ref) for usage examples.
+The following function is only available when `DataFrames`, `JSON3`,
+`JSONTables`, and `CSV` are loaded:
+```@docs
+get_nass_df
+```
