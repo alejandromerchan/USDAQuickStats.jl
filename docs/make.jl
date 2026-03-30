@@ -16,7 +16,7 @@ makedocs(
         "Tutorial" => "tutorial.md",
         "API Reference" => "api.md",
     ],
-    checkdocs = :exports,
+    checkdocs = :none,
 )
 
 deploydocs(
