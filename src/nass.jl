@@ -42,5 +42,5 @@ function get_nass(args...; format::String="json")
     key = get_api_key()
     url = string(usda_url, "/api/api_GET/?key=", key, "&format=", lowercase(format), _build_query(args))
     response = _make_request(url)
-    return _parse_response(response.body, format)
+    return response.body
 end
