@@ -1,5 +1,3 @@
-const USDA_KEY_NAME = "USDA_QUICK_SURVEY_KEY"
-
 """
     set_api_key(api_key::String; overwrite::Bool=false)
 
