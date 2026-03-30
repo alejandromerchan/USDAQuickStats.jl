@@ -19,4 +19,26 @@ include("nass.jl")
 include("counts.jl")
 include("param_values.jl")
 
+
+"""
+    get_nass_df(args...; format="json") -> DataFrame
+
+Query the USDA NASS Quick Stats database and return the results as a
+`DataFrame` directly. Available when `DataFrames`, `JSON3`, `JSONTables`,
+and `CSV` are loaded.
+
+Supports `"json"` and `"csv"` formats. XML is not supported and will
+return raw bytes with a warning.
+
+See `get_nass` for full documentation of query parameters.
+
+# Examples
+```julia
+using USDAQuickStats, DataFrames
+
+df = get_nass_df("commodity_desc=ORANGES", "state_alpha=CA", "year=2019")
+```
+"""
+function get_nass_df end
+
 end # module
