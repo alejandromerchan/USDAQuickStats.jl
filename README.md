@@ -1,10 +1,13 @@
 # USDAQuickStats.jl
 
-[![CI](https://github.com/alejandromerchan/USDAQuickStats.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/alejandromerchan/USDAQuickStats.jl/actions/workflows/CI.yml)
+[![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://alejandromerchan.github.io/USDAQuickStats.jl/stable)
+[![Development Documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://alejandromerchan.github.io/USDAQuickStats.jl/dev)
+[![Test workflow status](https://github.com/alejandromerchan/USDAQuickStats.jl/actions/workflows/Test.yml/badge.svg?branch=main)](https://github.com/alejandromerchan/USDAQuickStats.jl/actions/workflows/Test.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/alejandromerchan/USDAQuickStats.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/alejandromerchan/USDAQuickStats.jl)
-[![Julia](https://img.shields.io/badge/Julia-1.9+-blue.svg)](https://julialang.org)
+[![Docs workflow status](https://github.com/alejandromerchan/USDAQuickStats.jl/actions/workflows/Docs.yml/badge.svg?branch=main)](https://github.com/alejandromerchan/USDAQuickStats.jl/actions/workflows/Docs.yml?query=branch%3Amain)
+[![Julia](https://img.shields.io/badge/Julia-1.10+-blue.svg)](https://julialang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://alejandromerchan.github.io/USDAQuickStats.jl)
+[![BestieTemplate](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/JuliaBesties/BestieTemplate.jl/main/docs/src/assets/badge.json)](https://github.com/JuliaBesties/BestieTemplate.jl)
 
 `USDAQuickStats.jl` provides functions to access data from the USDA National Agricultural
 Statistics Service (NASS) [Quick Stats database](https://quickstats.nass.usda.gov/api) API

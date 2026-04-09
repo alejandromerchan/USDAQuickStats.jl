@@ -1,0 +1,36 @@
+# Changes here will be overwritten by Copier
+AddAllcontributors: false
+AddCitationCFF: true
+AddCodeOfConduct: false
+AddContributionDocs: false
+AddCopierCI: true
+AddDocs: true
+AddDocsCI: true
+AddFormatterAndLinterConfigFiles: false
+AddGitHubPRTemplate: false
+AddGitHubTemplates: false
+AddLintCI: true
+AddLychee: true
+AddMacToCI: true
+AddTagBotCI: true
+AddTestCI: true
+AddWinToCI: true
+Authors: H. Alejandro Merchan,California Department of Pesticide Regulation
+CheckExplicitImports: false
+GitHubActionVersionAutoUpdate: dependabot
+JuliaCompatAutoUpdate: compathelper
+JuliaMinCIVersion: '1.10'
+JuliaMinVersion: '1.9'
+License: MIT
+LicenseCopyrightHolders: H. Alejandro Merchan, California Department of Pesticide
+    Regulation
+PackageName: USDAQuickStats
+PackageOwner: alejandromerchan
+PackageUUID: 7a997779-2268-4af1-92a2-957a4c5037ec
+RunJuliaNightlyOnCI: true
+StrategyConfirmIncluded: true
+StrategyLevel: 1
+StrategyReviewExcluded: false
+TestingStrategy: basic
+UseCirrusCI: false
+_src_path: /home/alejandromerchan/.julia/packages/BestieTemplate/8zQC9
