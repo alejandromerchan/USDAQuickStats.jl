@@ -28,7 +28,7 @@ Query the USDA NASS Quick Stats database and return the results as a
 and `CSV` are loaded.
 
 Supports `"json"` and `"csv"` formats. XML is not supported and will
-return raw bytes with a warning.
+throw an `ArgumentError`.
 
 See `get_nass` for full documentation of query parameters.
 

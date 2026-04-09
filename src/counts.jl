@@ -22,5 +22,6 @@ function get_counts(args...)
     response = _make_request(url)
     body = String(response.body)
     m = match(r"\d+", body)
+    m === nothing && throw(ErrorException("Unexpected response from counts endpoint: $body"))
     return parse(Int, m.match)
 end
