@@ -1,3 +1,7 @@
+```@meta
+CurrentModule = USDAQuickStats
+```
+
 # USDAQuickStats.jl
 
 `USDAQuickStats.jl` provides a simple Julia interface to the

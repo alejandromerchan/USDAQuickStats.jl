@@ -1,0 +1,14 @@
+exclude = [
+  "@ref",
+  "@cite",
+  "^https://github.com/.*/releases/tag/v.*$",
+  "^https://doi.org/FIXME$",
+  "^https://alejandromerchan.github.io/USDAQuickStats.jl/stable$",
+  "zenodo.org/badge/DOI/FIXME$",
+  "^https://quickstats.nass.usda.gov",
+  "^https://github.com/.*/actions/workflows/.*\\.svg"
+]
+
+exclude_path = [
+  "docs/build"
+]
