@@ -24,6 +24,15 @@ function _encode_param(param::String)
 end
 
 """
+    _build_nass_url(key, format, args) -> String
+
+Internal helper. Builds the full URL for the main NASS query endpoint.
+"""
+function _build_nass_url(key::String, format::String, args)
+    return string(usda_url[], "/api/api_GET/?key=", key, "&format=", lowercase(format), _build_query(args))
+end
+
+"""
     _make_request(url::String) -> HTTP.Response
 
 Internal helper. Makes a GET request and provides informative error messages
