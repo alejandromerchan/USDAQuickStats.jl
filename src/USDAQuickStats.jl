@@ -10,7 +10,7 @@ export
     get_nass,
     get_nass_df
 
-const usda_url = "https://quickstats.nass.usda.gov"
+const usda_url = Ref("https://quickstats.nass.usda.gov")
 const USDA_KEY_NAME = "USDA_QUICK_SURVEY_KEY"
 
 include("utils.jl")

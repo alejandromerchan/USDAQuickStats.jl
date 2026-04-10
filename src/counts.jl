@@ -18,7 +18,7 @@ get_counts("source_desc=SURVEY", "commodity_desc=ORANGES", "state_alpha=CA", "ye
 """
 function get_counts(args...)
     key = get_api_key()
-    url = string(usda_url, "/api/get_counts/?key=", key, _build_query(args))
+    url = string(usda_url[], "/api/get_counts/?key=", key, _build_query(args))
     response = _make_request(url)
     body = String(response.body)
     m = match(r"\d+", body)
