@@ -64,7 +64,7 @@ The package provides six exported functions:
 - `set_api_key` — set your USDA NASS API key for the current session
 - `get_api_key` — return the currently set API key
 - `get_nass` — query the main USDA NASS Quick Stats database
-- `get_nass_df` - query the main USDA NASS Quick Statas database and returns a dataframe, if DataFrames is installed.
+- `get_nass_df` - query the main USDA NASS Quick Stats database and return a DataFrame directly (requires DataFrames extension).
 - `get_counts` — check the number of records a query would return
 - `get_param_values` — list all valid values for a given database field
 
@@ -97,14 +97,14 @@ count = get_counts(
     "state_alpha=CA",
     "year=2019"
 )
-# 276
+# 957
 ```
 
 A query that is too broad will return a count exceeding the limit:
 
 ```julia
 get_counts("source_desc=SURVEY", "year=2019")
-# 448878 — this query would fail with get_nass
+# 448858 — this query would fail with get_nass
 ```
 
 ### Query the database

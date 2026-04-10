@@ -40,13 +40,13 @@ count = get_counts(
     "state_alpha=CA",
     "year=2019"
 )
-# 276 — well within the limit, safe to proceed
+# 957 — well within the limit, safe to proceed
 ```
 
 If a query is too broad:
 ```julia
 get_counts("source_desc=SURVEY", "year=2019")
-# 448878 — exceeds the limit, needs to be narrowed down
+# 448858 — exceeds the limit, needs to be narrowed down
 ```
 
 Narrow it down by adding more filters until the count is
