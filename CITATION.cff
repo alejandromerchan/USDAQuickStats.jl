@@ -9,5 +9,5 @@ authors:
     family-names: Merchan
     affiliation: California Department of Pesticide Regulation
 repository-code: https://github.com/alejandromerchan/USDAQuickStats.jl
-version: 0.4.5
+version: 1.0.0
 license: MIT
