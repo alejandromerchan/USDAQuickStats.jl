@@ -40,7 +40,7 @@ function get_nass(args...; format::String="json")
         throw(ArgumentError("Invalid format \"$format\". Must be one of: $(join(VALID_FORMATS, ", "))"))
     end
     key = get_api_key()
-    url = string(usda_url, "/api/api_GET/?key=", key, "&format=", lowercase(format), _build_query(args))
+    url = string(usda_url[], "/api/api_GET/?key=", key, "&format=", lowercase(format), _build_query(args))
     response = _make_request(url)
     return response.body
 end
