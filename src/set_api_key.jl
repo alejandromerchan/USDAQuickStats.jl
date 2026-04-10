@@ -15,15 +15,15 @@ https://quickstats.nass.usda.gov/api.
 
 # Examples
 ```julia
-set_api_key("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+set_api_key("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
 
 # Overwrite an existing key
-set_api_key("yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy"; overwrite=true)
+set_api_key("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"; overwrite=true)
 ```
 """
 function set_api_key(api_key::String; overwrite::Bool=false)
-    if length(api_key) != 36
-        throw(ArgumentError("API key must be 36 characters long (UUID format). Got $(length(api_key)) characters."))
+    if !occursin(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", api_key)
+        throw(ArgumentError("API key must be a valid UUID (aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa). Got: \"$api_key\""))
     end
 
     if haskey(ENV, USDA_KEY_NAME) && !overwrite

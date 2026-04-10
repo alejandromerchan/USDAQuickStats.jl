@@ -10,7 +10,7 @@ using CSV
 # Fixtures
 # ---------------------------------------------------------------------------
 
-function with_key(f, key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+function with_key(f, key = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
     old = get(ENV, "USDA_QUICK_SURVEY_KEY", nothing)
     ENV["USDA_QUICK_SURVEY_KEY"] = key
     try
@@ -91,19 +91,19 @@ end
     @testset "set_api_key" begin
         without_key() do
             @test begin
-                set_api_key("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
-                ENV["USDA_QUICK_SURVEY_KEY"] == "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                set_api_key("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+                ENV["USDA_QUICK_SURVEY_KEY"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
             end
-            @test_throws ArgumentError set_api_key("yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy")
+            @test_throws ArgumentError set_api_key("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
             @test begin
-                set_api_key("yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy"; overwrite = true)
-                ENV["USDA_QUICK_SURVEY_KEY"] == "yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy"
+                set_api_key("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"; overwrite = true)
+                ENV["USDA_QUICK_SURVEY_KEY"] == "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
             end
         end
 
         without_key() do
             @test_throws ArgumentError set_api_key("tooshort")
-            @test_throws ArgumentError set_api_key("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx-extra")
+            @test_throws ArgumentError set_api_key("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa-extra")
         end
     end
 
@@ -112,7 +112,7 @@ end
             @test_throws KeyError get_api_key()
         end
         with_key() do
-            @test get_api_key() == "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            @test get_api_key() == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
         end
     end
 

@@ -1,7 +1,7 @@
 module DataFramesExt
 
 using USDAQuickStats
-using USDAQuickStats: usda_url, _build_query, _make_request, VALID_FORMATS
+using USDAQuickStats: _build_nass_url, _make_request, VALID_FORMATS
 using DataFrames
 using JSON3
 using JSONTables
@@ -31,7 +31,7 @@ function USDAQuickStats.get_nass_df(args...; format::String="json")
         throw(ArgumentError("Invalid format \"$format\". Must be one of: $(join(VALID_FORMATS, ", "))"))
     end
     key = USDAQuickStats.get_api_key()
-    url = string(usda_url[], "/api/api_GET/?key=", key, "&format=", lowercase(format), _build_query(args))
+    url = _build_nass_url(key, format, args)
     response = _make_request(url)
 
     if lowercase(format) == "json"
