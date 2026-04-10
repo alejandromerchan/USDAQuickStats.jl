@@ -15,7 +15,7 @@ Query the USDA NASS Quick Stats database and return the results as a
 and `CSV` are loaded.
 
 Supports `"json"` and `"csv"` formats. XML is not supported and will
-return raw bytes with a warning.
+throw an `ArgumentError`.
 
 See `get_nass` for full documentation of query parameters.
 
@@ -39,8 +39,7 @@ function USDAQuickStats.get_nass_df(args...; format::String="json")
     elseif lowercase(format) == "csv"
         return CSV.read(response.body, DataFrame)
     else
-        @warn "DataFrame conversion is not supported for XML format. Returning raw bytes."
-        return response.body
+        throw(ArgumentError("DataFrame conversion is not supported for XML format. Use get_nass with format=\"xml\" to retrieve raw bytes."))
     end
 end
 

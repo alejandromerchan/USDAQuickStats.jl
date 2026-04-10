@@ -20,5 +20,6 @@ function get_param_values(field::String)
     body = String(response.body)
     matches = eachmatch(r"\"([^\"]+)\"", body)
     values = [m.match[2:end-1] for m in matches]
+    isempty(values) && throw(ErrorException("Unexpected response from param_values endpoint: $body"))
     return values[2:end]  # skip the first match which is the field name key
 end
