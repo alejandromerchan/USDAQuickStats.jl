@@ -16,7 +16,7 @@ JSONTables = "b9914132-a727-11e9-1322-f18e41205b0b"
 DataFramesExt = ["DataFrames", "JSON3", "JSONTables", "CSV"]
 
 [compat]
-CSV = "0.10"
+CSV = "0.10, 1"
 DataFrames = "1"
 HTTP = "1, 2"
 JSON3 = "1"
