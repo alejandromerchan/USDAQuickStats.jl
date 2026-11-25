@@ -26,31 +26,24 @@ jobs:
           - "1"
         os:
           - ubuntu-latest
-
+          - macOS-latest
+          
           - windows-latest
           
         arch:
-          - x64
+          # "default" means the architecture of the runner executing the job
+          - default
         allow_failure: [false]
         include:
-          # macOS-latest runners are Apple Silicon, so they need aarch64
-          - version: "1.10"
-            os: macOS-latest
-            arch: aarch64
-            allow_failure: false
-          - version: "1"
-            os: macOS-latest
-            arch: aarch64
-            allow_failure: false
           - version: "nightly"
             os: ubuntu-latest
-            arch: x64
+            arch: default
             allow_failure: true
           - version: "nightly"
             os: macOS-latest
-            arch: aarch64
+            arch: default
             allow_failure: true
           - version: "nightly"
             os: windows-latest
-            arch: x64
+            arch: default
             allow_failure: true
